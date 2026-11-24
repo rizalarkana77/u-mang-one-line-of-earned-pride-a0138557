@@ -23,6 +23,8 @@ def main() -> None:
         raise SystemExit(f"entry is {len(text)} characters, outside 1-{MAX_CHARS}")
     if not text.strip():
         raise SystemExit("entry is only whitespace")
+    if any(ord(c) < 32 for c in text):
+        raise SystemExit("entry contains a control character")
     data = text.encode("utf-8")
 
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
@@ -41,7 +43,7 @@ def main() -> None:
     if written != data:
         raise SystemExit("output does not match the entry byte for byte")
     print(
-        f"wrote {target}: {len(written)} bytes, "
+        f"wrote {target}: {len(text)} chars, {len(written)} bytes, "
         f"sha256 {hashlib.sha256(written).hexdigest()}"
     )
 
